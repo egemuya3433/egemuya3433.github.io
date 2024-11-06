@@ -45,6 +45,11 @@ self.addEventListener('activate', (event) => {
     )
   );
   self.clients.claim(); // Take control of all pages immediately
+
+  // Reload all clients silently in the background
+  self.clients.matchAll({ type: 'window' }).then((clients) => {
+    clients.forEach((client) => client.postMessage({ action: 'reload' }));
+  });
 });
 
 // Listen for messages
