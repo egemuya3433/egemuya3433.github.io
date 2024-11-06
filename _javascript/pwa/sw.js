@@ -25,67 +25,51 @@ function verifyUrl(url) {
   return true;
 }
 
+// Install event
 self.addEventListener('install', (event) => {
-  if (purge) {
-    return;
-  }
+  if (purge) return;
 
   event.waitUntil(
-    caches.open(swconf.cacheName).then((cache) => {
-      return cache.addAll(swconf.resources);
-    })
+    caches.open(swconf.cacheName).then((cache) => cache.addAll(swconf.resources))
   );
+  self.skipWaiting(); // Force this SW to activate as soon as it finishes installing
 });
 
+// Activate event
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keyList) => {
-      return Promise.all(
-        keyList.map((key) => {
-          if (purge) {
-            return caches.delete(key);
-          } else {
-            if (key !== swconf.cacheName) {
-              return caches.delete(key);
-            }
-          }
-        })
-      );
-    })
+    caches.keys().then((keyList) => 
+      Promise.all(
+        keyList.map((key) => (key !== swconf.cacheName || purge) ? caches.delete(key) : undefined)
+      )
+    )
   );
+  self.clients.claim(); // Take control of all pages immediately
 });
 
+// Listen for messages
 self.addEventListener('message', (event) => {
   if (event.data === 'SKIP_WAITING') {
     self.skipWaiting();
   }
 });
 
+// Fetch event
 self.addEventListener('fetch', (event) => {
-  if (event.request.headers.has('range')) {
-    return;
-  }
+  if (event.request.headers.has('range')) return;
 
   event.respondWith(
     caches.match(event.request).then((response) => {
-      if (response) {
-        return response;
-      }
+      if (response) return response;
 
-      return fetch(event.request).then((response) => {
-        const url = event.request.url;
-
-        if (purge || event.request.method !== 'GET' || !verifyUrl(url)) {
-          return response;
+      return fetch(event.request).then((networkResponse) => {
+        if (purge || event.request.method !== 'GET' || !verifyUrl(event.request.url)) {
+          return networkResponse;
         }
 
-        // See: <https://developers.google.com/web/fundamentals/primers/service-workers#cache_and_return_requests>
-        let responseToCache = response.clone();
-
-        caches.open(swconf.cacheName).then((cache) => {
-          cache.put(event.request, responseToCache);
-        });
-        return response;
+        let responseToCache = networkResponse.clone();
+        caches.open(swconf.cacheName).then((cache) => cache.put(event.request, responseToCache));
+        return networkResponse;
       });
     })
   );
