@@ -87,7 +87,7 @@ post = ""
 name = "Categories"
 url = "/categories/"
 title = ""
-weight = 2
+weight = 5
 
 [menus.main.params]
 icon = "fa-solid fa-folder-tree"
@@ -100,7 +100,7 @@ post = ""
 name = "Tags"
 url = "/tags/"
 title = ""
-weight = 3
+weight = 4
 
 [menus.main.params]
 icon = "fa-solid fa-tags"
