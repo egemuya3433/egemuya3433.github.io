@@ -14,9 +14,9 @@ keywords:
 comment: false
 weight: 0
 tags:
-  - draft
+  - 일상
 categories:
-  - draft
+  - 일상
 hiddenFromHomePage: false
 hiddenFromSearch: false
 hiddenFromRelated: false
