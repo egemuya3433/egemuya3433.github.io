@@ -13,10 +13,8 @@ description:
 keywords:
 comment: false
 weight: 0
-tags:
-  - 일상
-categories:
-  - 일상
+tags:["일상"]
+categories:["일상"]
 hiddenFromHomePage: false
 hiddenFromSearch: false
 hiddenFromRelated: false
