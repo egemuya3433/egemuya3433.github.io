@@ -3,7 +3,7 @@ title: First Post
 subtitle:
 date: 2026-01-04T13:30:31+09:00
 slug: 38114d4
-draft: true
+draft: false
 author:
   name:
   link:
